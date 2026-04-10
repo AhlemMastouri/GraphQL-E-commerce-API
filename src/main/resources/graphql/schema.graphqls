@@ -1,0 +1,152 @@
+# ─── Types de base ───────────────────────────────────────────
+
+type Product {
+    id: ID!
+    name: String
+    price: Float
+    stock: Int
+    category: Category
+}
+
+type Order {
+    id: ID!
+    status: String
+    user: User
+}
+
+type Category {
+    id: ID!
+    name: String
+}
+
+type User {
+    id: ID!
+    name: String
+}
+
+# ─── Pagination ───────────────────────────────────────────────
+
+type PageInfo {
+    totalElements: Int
+    totalPages: Int
+    currentPage: Int
+    pageSize: Int
+    hasNext: Boolean
+    hasPrevious: Boolean
+}
+
+type ProductPage {
+    content: [Product]
+    pageInfo: PageInfo
+}
+
+type OrderPage {
+    content: [Order]
+    pageInfo: PageInfo
+}
+
+# ─── Filtrage ─────────────────────────────────────────────────
+
+input ProductFilter {
+    name: String
+    minPrice: Float
+    maxPrice: Float
+    categoryId: ID
+}
+
+input OrderFilter {
+    status: String
+    userId: ID
+}
+
+# ─── Tri ──────────────────────────────────────────────────────
+
+enum SortDirection {
+    ASC
+    DESC
+}
+
+enum ProductSortField {
+    NAME
+    PRICE
+    STOCK
+}
+
+enum OrderSortField {
+    STATUS
+    ID
+}
+
+input ProductSort {
+    field: ProductSortField
+    direction: SortDirection
+}
+
+input OrderSort {
+    field: OrderSortField
+    direction: SortDirection
+}
+
+# ─── Types pour suppressions ──────────────────────────────────
+
+type DeletedOrder {
+    id: ID!
+}
+
+type DeletedProduct {
+    id: ID!
+}
+
+# ─── Queries ──────────────────────────────────────────────────
+
+type Query {
+    # Avec pagination + filtrage + tri
+    products(
+        page: Int = 0
+        size: Int = 10
+        filter: ProductFilter
+        sort: ProductSort
+    ): ProductPage
+
+    orders(
+        page: Int = 0
+        size: Int = 10
+        filter: OrderFilter
+        sort: OrderSort
+    ): OrderPage
+
+    # Sans pagination (listes simples)
+    categories: [Category]
+    users: [User]
+
+    # Par ID
+    productById(id: ID!): Product
+    orderById(id: ID!): Order
+    userById(id: ID!): User
+    categoryById(id: ID!): Category
+}
+
+# ─── Mutations ────────────────────────────────────────────────
+
+type Mutation {
+    # Produits
+    createProduct(name: String, price: Float, stock: Int, categoryId: ID): Product
+    updateProduct(id: ID!, name: String, price: Float, stock: Int, categoryId: ID): Product
+    deleteProduct(id: ID!): Boolean
+
+    # Commandes
+    createOrder(userId: ID): Order
+    updateOrderStatus(id: ID, status: String): Order
+    deleteOrder(id: ID): Boolean
+}
+
+# ─── Subscriptions ────────────────────────────────────────────
+
+type Subscription {
+    productCreated: Product
+    productDeleted: Product
+    orderCreated: Order
+    orderUpdated: Order
+    orderDeleted: Order
+    orderByUser(userId: ID!): Order   # ← ajouter cette ligne
+}
