@@ -51,7 +51,8 @@ export default function App() {
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
         <StatCard label="Produits"     value={stats.products}   color="#3B6D11" />
-        <StatCard label="Commandes"    value={stats.orders}     color="#0C447C" />
+
+
         <StatCard label="Catégories"   value={stats.categories} color="#854F0B" />
         <StatCard label="Utilisateurs" value={stats.users}      color="#764ba2" />
       </div>

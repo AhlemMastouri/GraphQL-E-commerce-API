@@ -16,11 +16,9 @@ public class ClientCredentialsFilter extends OncePerRequestFilter {
 
     private final ClientCredentialsConfig config;
 
-    // Chemins qui ne nécessitent pas d'authentification
     private static final String[] PUBLIC_PATHS = {
             "/graphiql", "/actuator"
     };
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -29,7 +27,7 @@ public class ClientCredentialsFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // Ignorer les chemins publics
+
         for (String publicPath : PUBLIC_PATHS) {
             if (path.contains(publicPath)) {
                 filterChain.doFilter(request, response);
@@ -41,7 +39,6 @@ public class ClientCredentialsFilter extends OncePerRequestFilter {
         String clientId     = request.getHeader("X-Client-Id");
         String clientSecret = request.getHeader("X-Client-Secret");
 
-        // Valider les credentials
         if (!config.getClientId().equals(clientId) ||
                 !config.getClientSecret().equals(clientSecret)) {
 
